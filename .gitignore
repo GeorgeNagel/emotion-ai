@@ -1,0 +1,8 @@
+# Python compiled files
+*.pyc
+
+# Python virtual environment
+virtualenv
+
+# OSX Annoying files
+*.DS_Store
