@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from agent import Mood
+from mood import Mood
 
 
 class TestMood(TestCase):
