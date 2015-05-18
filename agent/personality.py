@@ -1,4 +1,4 @@
-from agent.mood import Mood
+from mood import Mood
 
 
 class Personality(object):
