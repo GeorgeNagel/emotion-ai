@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mood import Mood
+from ai.core.mood import Mood
 
 
 class TestMood(TestCase):

@@ -3,10 +3,10 @@ print sys.path
 
 from unittest import TestCase
 
-from agent.agent import Agent
-from agent.mood import Mood
-from agent.obj import Object
-from agent.personality import Personality
+from ai.core.agent import Agent
+from ai.core.mood import Mood
+from ai.core.obj import Object
+from ai.core.personality import Personality
 
 
 def agent_factory():
