@@ -5,5 +5,6 @@ rm -f *.pyc
 find agent/ -name *.pyc -delete
 
 # Run the test suite
-virtualenv/bin/nosetests agent
-virtualenv/bin/flake8 -v agent
+export PYTHONPATH=agent
+virtualenv/bin/nosetests tests
+virtualenv/bin/flake8 -v tests
