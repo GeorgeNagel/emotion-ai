@@ -15,6 +15,14 @@ def agent_factory():
     return agent
 
 
+class TestInit(TestCase):
+    def test_init(self):
+        """New agents should have a uuid."""
+        a = agent_factory()
+        uuid = getattr(a, "uuid")
+        self.assertIsInstance(uuid, basestring)
+
+
 class TestFromPersonality(TestCase):
     """Create an agent given a personality."""
     def test_from_personality(self):

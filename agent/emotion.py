@@ -10,6 +10,11 @@ class Emotion(object):
         raise NotImplementedError
 
     def to_mood(self):
+        """
+        Convert the emotion to PAD space
+        http://infoscience.epfl.ch/record/199429/files/510.pdf
+        pg. 25
+        """
         p, a, d = self._to_pad()
         mood = Mood(p, a, d)
         return mood

@@ -8,6 +8,7 @@ class Agent(Object):
         self.mood = Mood
         # Like/dislike relationships with objects
         self.relationships = {}
+        super(Agent, self).__init__()
 
     @classmethod
     def from_personality(self, personality):
