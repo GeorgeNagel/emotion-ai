@@ -36,7 +36,8 @@ class TestSetLike(TestCase):
         """set_like() should raise an error on values less than -1."""
         disliked_object = Object()
         agent = agent_factory()
-        self.assertRaises(ValueError, agent.set_like(disliked_object, -20))
+        with self.assertRaises(ValueError):
+            agent.set_like(disliked_object, -20)
 
         # No error should be raised
         agent.set_like(disliked_object, -1)
@@ -45,7 +46,8 @@ class TestSetLike(TestCase):
         """set_like() should raise an error on values greater than 1."""
         liked_object = Object()
         agent = agent_factory()
-        self.assertRaises(ValueError, agent.set_like(liked_object, 20))
+        with self.assertRaises(ValueError):
+            agent.set_like(liked_object, 20)
 
         # No error should be raised
         agent.set_like(liked_object, 1)

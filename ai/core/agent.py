@@ -20,6 +20,8 @@ class Agent(Object):
         Set the like/dislike value for an object.
         Must be -1 <= x <= 1
         """
+        if value < -1 or value > 1:
+            raise ValueError()
         self.relationships[obj.uuid] = value
 
     def get_like(self, obj):
