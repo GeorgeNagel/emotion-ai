@@ -3,10 +3,11 @@ print sys.path
 
 from unittest import TestCase
 
+from ai.core.action import Action
 from ai.core.agent import Agent
+from ai.core.culture import Culture
+from ai.core.emotion import Remorse, Gloating
 from ai.core.mood import Mood
-from ai.core.obj import Object
-from ai.core.personality import Personality
 
 
 def agent_factory():
@@ -23,41 +24,41 @@ class TestInit(TestCase):
         self.assertIsInstance(uuid, basestring)
 
 
-class TestFromPersonality(TestCase):
+class TestFromOCEAN(TestCase):
     """Create an agent given a personality."""
-    def test_from_personality(self):
-        personality = Personality(-1, -1, 1, -1, 1)
-        agent = Agent.from_personality(personality)
+    def test_from_OCEAN(self):
+        agent = Agent.from_OCEAN(-1, -1, 1, -1, 1)
         self.assertEqual(str(agent.mood), "Disdainful")
 
 
-class TestSetLike(TestCase):
-    def test_lower_limit(self):
-        """set_like() should raise an error on values less than -1."""
-        disliked_object = Object()
-        agent = agent_factory()
-        with self.assertRaises(ValueError):
-            agent.set_like(disliked_object, -20)
-
-        # No error should be raised
-        agent.set_like(disliked_object, -1)
-
-    def test_upper_limit(self):
-        """set_like() should raise an error on values greater than 1."""
-        liked_object = Object()
-        agent = agent_factory()
-        with self.assertRaises(ValueError):
-            agent.set_like(liked_object, 20)
-
-        # No error should be raised
-        agent.set_like(liked_object, 1)
+class TestCulture(TestCase):
+    def test_set_get(self):
+        c = Culture()
+        a = agent_factory()
+        a.set_culture(c)
+        c_returned = a.get_culture()
+        self.assertEqual(c, c_returned)
 
 
-class TestGetLike(TestCase):
-    def test_get_like(self):
-        obj = Object()
-        agent = agent_factory()
-        agent.set_like(obj, 0.5)
+class TestEmotionsForObservedAction(TestCase):
+    def test_emotions_for_observed_action(self):
+        c = Culture()
+        agent_1 = agent_factory()
+        agent_1.set_culture(c)
+        agent_2 = agent_factory()
+        agent_2.set_culture(c)
+        action = Action()
+        action.name = "Hit"
+        c.set_goodness(action, -.5)
+        c.set_praiseworthiness(action, -1)
+        c.set_love(agent_2, -.5)
 
-        like_value = agent.get_like(obj)
-        self.assertEqual(like_value, 0.5)
+        emotions = agent_1._emotions_for_observed_action(
+            action, agent_1, agent_2
+        )
+        emotion_1 = emotions.pop()
+        self.assertIsInstance(emotion_1, Gloating)
+        self.assertEqual(emotion_1.amount, .25)
+        emotion_2 = emotions.pop()
+        self.assertIsInstance(emotion_2, Remorse)
+        self.assertEqual(emotion_2.amount, 1)

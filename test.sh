@@ -2,9 +2,9 @@
 
 # Remove nasty .pyc files
 rm -f *.pyc
-find agent/ -name *.pyc -delete
+find ai/ -name *.pyc -delete
 
 # Run the test suite
-export PYTHONPATH=agent
+export PYTHONPATH=ai
 virtualenv/bin/nosetests tests
 virtualenv/bin/flake8 -v tests

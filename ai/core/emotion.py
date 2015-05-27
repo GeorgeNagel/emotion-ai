@@ -4,6 +4,8 @@ from mood import Mood
 class Emotion(object):
     def __init__(self, amount):
         """amount - how acute is the emotional reaction."""
+        if amount < 0 or amount > 1:
+            raise ValueError()
         self.amount = amount
 
     def _to_pad(self):
@@ -16,7 +18,7 @@ class Emotion(object):
         pg. 25
         """
         p, a, d = self._to_pad()
-        mood = Mood(p, a, d)
+        mood = Mood(p*self.amount, a*self.amount, d*self.amount)
         return mood
 
 
@@ -33,7 +35,7 @@ class Hope(Emotion):
 
 
 class Relief(Emotion):
-    """Because a feared bad thing didn’t happen."""
+    """Because a feared bad thing didn't happen."""
     def _to_pad(self):
         return (.2, -.3, .4)
 
@@ -63,7 +65,7 @@ class HappyFor(Emotion):
 
 
 class Gloating(Emotion):
-    """Because something bad happened to a person who isn’t liked."""
+    """Because something bad happened to a person who isn't liked."""
     def _to_pad(self):
         return (.3, -.3, -.1)
 
@@ -81,7 +83,7 @@ class Fear(Emotion):
 
 
 class Disappointment(Emotion):
-    """Because a hoped-for good thing didn’t happen."""
+    """Because a hoped-for good thing didn't happen."""
     def _to_pad(self):
         return (-.3, .1, -.4)
 

@@ -1,8 +1,14 @@
-from obj import Object
+from ai.core.emotion import Love, Hate, Pride, Remorse, Anger, Gratitude, \
+    HappyFor, SorryFor, Gloating, Resentment, Joy, Distress, Hope, Fear, \
+    Relief, Disappointment
+
+from ai.core.personality import Personality
+from ai.core.obj import Object
 
 
 class Agent(Object):
     """An object that has a mood."""
+    culture = None
 
     def __init__(self, Mood):
         self.mood = Mood
@@ -11,22 +17,146 @@ class Agent(Object):
         super(Agent, self).__init__()
 
     @classmethod
-    def from_personality(self, personality):
+    def from_OCEAN(self, o, c, e, a, n):
+        personality = Personality(o, c, e, a, n)
         mood = personality.to_mood()
         return Agent(mood)
 
-    def set_like(self, obj, value):
-        """
-        Set the like/dislike value for an object.
-        Must be -1 <= x <= 1
-        """
-        if value < -1 or value > 1:
-            raise ValueError()
-        self.relationships[obj.uuid] = value
+    def set_culture(self, culture):
+        self.culture = culture
 
-    def get_like(self, obj):
+    def get_culture(self):
+        return self.culture
+
+    def emotions_for_object(self, obj):
+        emotions = []
+        c = self.get_culture()
+        l = c.get_love(obj)
+        if l > 0:
+            e = Love(l)
+            emotions.append(e)
+        if l < 0:
+            e = Hate(l)
+            emotions.append(e)
+        return emotions
+
+    def emotions_for_action(self, action, agent, obj, prob, prior_prob=None):
         """
-        Get the like/dislike value for an object.
-        -1 <= x <= 1
+        Generate a list of emotions for actions based on
+        probability of the action happening.
         """
-        return self.relationships[obj.uuid]
+        emotions = []
+        # Calculate the expected joy/distress at an event's success
+        joy_distress = self._expected_joy_distress(action, agent, obj)
+        if prob > 0 and prob < 1:
+            if 'joy' in joy_distress:
+                # Possible joyful event
+                j = joy_distress['joy']
+                e = Hope(j*prob)
+                emotions.append(e)
+            if 'distress' in joy_distress:
+                # Possible distressing event
+                d = joy_distress['distress']
+                e = Fear(d*prob)
+                emotions.append(e)
+
+        if prob == 0 and prior_prob is not None:
+            if prior_prob > 0:
+                # Disconfirmed hope/fear
+                if 'joy' in joy_distress:
+                    # Disconfirmed hoped-for outcome
+                    j = joy_distress['joy']
+                    e = Disappointment(j*prior_prob)
+                    emotions.append(e)
+                if 'distress' in joy_distress:
+                    # Disconfirmed feared outcome
+                    d = joy_distress['distress']
+                    e = Relief(j*prior_prob)
+                    emotions.append(e)
+
+        if prob == 1:
+            confirmed_outcome_emotions = self._emotions_for_observed_action(
+                action, agent, obj
+            )
+            emotions.extend(confirmed_outcome_emotions)
+
+    def _expected_joy_distress(self, action, agent, obj):
+        """Calculate the expected joy and distress at an actions success."""
+        emotions = self.emotions_for_observed_action(action, agent, obj)
+        j = None
+        d = None
+        for e in emotions:
+            if isinstance(e, Joy):
+                j = e.amount
+            if isinstance(e, Distress):
+                d = e.amount
+        hope_fear = {}
+        if j:
+            hope_fear['joy'] = j
+        if d:
+            hope_fear['distress'] = d
+        return hope_fear
+
+    def _emotions_for_observed_action(self, action, agent, obj):
+        emotions = []
+        c = self.get_culture()
+        if c is None:
+            raise Exception("Cannot calculate emotions without a culture.")
+
+        p = c.get_praiseworthiness(action)
+        g = c.get_goodness(action)
+        l = c.get_love(obj)
+
+        if agent == self:
+            # Self-initiated
+            if p > 0:
+                # Praiseworthy
+                e = Pride(p)
+                emotions.append(e)
+            if p < 0:
+                # Shameworthy
+                e = Remorse(-1*p)
+                emotions.append(e)
+        else:
+            # Other-initiaed
+            if p > 0:
+                # Praiseworthy
+                e = Gratitude(p)
+                emotions.append(e)
+            if p < 0:
+                # Shameworthy
+                e = Anger(-1*p)
+                emotions.append(e)
+
+        if isinstance(obj, Agent):
+            if obj == self:
+                if g > 0:
+                    # Good thing happened
+                    e = Joy(g)
+                    emotions.append(e)
+                if g < 0:
+                    # Bad thing happened
+                    e = Distress(-1*g)
+                    emotions.append(e)
+            else:
+                if l > 0:
+                    # Something happened to a liked agent
+                    if g > 0:
+                        # Good thing happened
+                        e = HappyFor(l*g)
+                        emotions.append(e)
+                    if g < 0:
+                        # Bad thing happened
+                        e = SorryFor(l*g*-1)
+                        emotions.append(e)
+                if l < 0:
+                    # Something happened to a disliked agent
+                    if g > 0:
+                        # Good thing happened
+                        e = Resentment(-1*l*g)
+                        emotions.append(e)
+                    if g < 0:
+                        # Bad thing happened
+                        e = Gloating(l*g)
+                        emotions.append(e)
+        return emotions
