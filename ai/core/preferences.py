@@ -1,7 +1,7 @@
 """Default values for a group of agents."""
 
 
-class Culture(object):
+class Preferences(object):
     praiseworthiness_registry = None
     goodness_registry = None
     love_registry = None
@@ -13,7 +13,7 @@ class Culture(object):
 
     def register_action(self, action, p=0, g=0):
         """
-        Register an action to a culture.
+        Register an action to a Preferences.
         action - the action being registered
         p - the praiseworthiness of the subject of action [-1, 1]
         g - the goodness of being the object of an action [-1, 1]
@@ -23,7 +23,7 @@ class Culture(object):
 
     def register_object(self, obj, l=0):
         """
-        Register an object to a culture.
+        Register an object to a Preferences.
         obj - the object being registered
         l - the love/hate of the object. [-1, 1]
         """

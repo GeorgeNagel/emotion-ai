@@ -2,6 +2,7 @@ from ai.core.emotion import Love, Hate, Pride, Remorse, Anger, Gratitude, \
     HappyFor, SorryFor, Gloating, Resentment, Joy, Distress, Hope, Fear, \
     Relief, Disappointment
 
+from ai.core.preferences import Preferences
 from ai.core.personality import Personality
 from ai.core.obj import Object
 
@@ -22,11 +23,12 @@ class Agent(Object):
         mood = personality.to_mood()
         return Agent(mood)
 
-    def set_culture(self, culture):
-        self.culture = culture
+    def set_preferences(self, preferences):
+        assert(isinstance(preferences, Preferences))
+        self.preferences = preferences
 
-    def get_culture(self):
-        return self.culture
+    def get_preferences(self):
+        return self.preferences
 
     def emotions_for_object(self, obj):
         emotions = []
@@ -99,13 +101,13 @@ class Agent(Object):
 
     def _emotions_for_observed_action(self, action, agent, obj):
         emotions = []
-        c = self.get_culture()
-        if c is None:
+        preferences = self.get_preferences()
+        if preferences is None:
             raise Exception("Cannot calculate emotions without a culture.")
 
-        p = c.get_praiseworthiness(action)
-        g = c.get_goodness(action)
-        l = c.get_love(obj)
+        p = preferences.get_praiseworthiness(action)
+        g = preferences.get_goodness(action)
+        l = preferences.get_love(obj)
 
         if agent == self:
             # Self-initiated

@@ -5,22 +5,15 @@ from unittest import TestCase
 
 from ai.core.action import Action
 from ai.core.agent import Agent
-from ai.core.culture import Culture
+from ai.core.preferences import Preferences
 from ai.core.emotion import Remorse, Gloating
-from ai.core.mood import Mood
-
-
-def agent_factory():
-    mood = Mood(0, 0, 0)
-    agent = Agent(mood)
-    return agent
 
 
 class TestInit(TestCase):
     def test_init(self):
         """New agents should have a uuid."""
-        a = agent_factory()
-        uuid = getattr(a, "uuid")
+        agent = Agent.from_OCEAN(0, 0, 0, 0, 0)
+        uuid = getattr(agent, "uuid")
         self.assertIsInstance(uuid, basestring)
 
 
@@ -31,27 +24,27 @@ class TestFromOCEAN(TestCase):
         self.assertEqual(str(agent.mood), "Disdainful")
 
 
-class TestCulture(TestCase):
+class TestPreferences(TestCase):
     def test_set_get(self):
-        c = Culture()
-        a = agent_factory()
-        a.set_culture(c)
-        c_returned = a.get_culture()
-        self.assertEqual(c, c_returned)
+        p = Preferences()
+        agent = Agent.from_OCEAN(0, 0, 0, 0, 0)
+        agent.set_preferences(p)
+        p_returned = agent.get_preferences()
+        self.assertEqual(p, p_returned)
 
 
 class TestEmotionsForObservedAction(TestCase):
     def test_emotions_for_observed_action(self):
-        c = Culture()
-        agent_1 = agent_factory()
-        agent_1.set_culture(c)
-        agent_2 = agent_factory()
-        agent_2.set_culture(c)
+        p = Preferences()
+        agent_1 = Agent.from_OCEAN(0, 0, 0, 0, 0)
+        agent_1.set_preferences(p)
+        agent_2 = Agent.from_OCEAN(-1, -1, 1, -1, 1)
+        agent_2.set_preferences(p)
         action = Action()
         action.name = "Hit"
-        c.set_goodness(action, -.5)
-        c.set_praiseworthiness(action, -1)
-        c.set_love(agent_2, -.5)
+        p.set_goodness(action, -.5)
+        p.set_praiseworthiness(action, -1)
+        p.set_love(agent_2, -.5)
 
         emotions = agent_1._emotions_for_observed_action(
             action, agent_1, agent_2
