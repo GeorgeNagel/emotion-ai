@@ -162,3 +162,16 @@ class Agent(Object):
                         e = Gloating(l*g)
                         emotions.append(e)
         return emotions
+
+    def update_mood(emotions):
+        """Update mood. Takes a list of emotions."""
+        pass
+
+    def _update_mood_from_emotion(emotion):
+        """Update mood given a single emotion."""
+        pass
+
+    def tick_mood():
+        """Update mood state."""
+        # Update emotion amounts
+        # Decay mood towards baseline

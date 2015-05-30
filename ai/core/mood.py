@@ -10,6 +10,15 @@ class Mood(object):
         self.a = a
         self.d = d
 
+    def add_mood(self, other):
+        self.p = self.p + other.p
+        self.a = self.a + other.a
+        self.d = self.d + other.d
+
+    def add_emotion(self, emotion):
+        emotion_mood = emotion.to_mood()
+        self.add_mood(emotion_mood)
+
     def __str__(self):
         """
         Value to return when cast to a string.
