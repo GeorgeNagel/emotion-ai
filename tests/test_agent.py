@@ -51,8 +51,17 @@ class TestAgent(TestCase):
         self.assertEqual(emotion_2.amount, 1)
 
     def test_tick_mood(self):
-        agent = Agent(.1, -.1, .1, -.1, .1)
+        agent = Agent(.01, -.01, .01, -.01, .01)
         self.assertEqual(str(agent.mood), "Disdainful")
-        agent.emotions = [Joy(.5)]
+        agent.emotions = [Joy(.05)]
+
         agent.tick_mood()
+        self.assertEqual(len(agent.emotions), 1)
+        self.assertEqual(agent.emotions[0].amount, .025)
         self.assertEqual(str(agent.mood), "Relaxed")
+
+        # After enough ticks, the emotion should be removed from memory
+        agent.tick_mood()
+        agent.tick_mood()
+        self.assertEqual(len(agent.emotions), 0)
+        self.assertEqual(str(agent.mood), "Disdainful")
