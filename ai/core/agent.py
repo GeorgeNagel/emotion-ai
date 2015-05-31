@@ -6,22 +6,20 @@ from ai.core.preferences import Preferences
 from ai.core.personality import Personality
 from ai.core.obj import Object
 
+EMOTION_THRESHOLD = .01
+
 
 class Agent(Object):
     """An object that has a mood."""
     culture = None
 
-    def __init__(self, Mood):
-        self.mood = Mood
+    def __init__(self, o, c, e, a, n):
+        self.personality = Personality(o, c, e, a, n)
+        self.mood = self.personality.to_mood()
+        self.emotions = []
         # Like/dislike relationships with objects
         self.relationships = {}
         super(Agent, self).__init__()
-
-    @classmethod
-    def from_OCEAN(self, o, c, e, a, n):
-        personality = Personality(o, c, e, a, n)
-        mood = personality.to_mood()
-        return Agent(mood)
 
     def set_preferences(self, preferences):
         assert(isinstance(preferences, Preferences))
@@ -163,15 +161,18 @@ class Agent(Object):
                         emotions.append(e)
         return emotions
 
-    def update_mood(emotions):
-        """Update mood. Takes a list of emotions."""
-        pass
-
-    def _update_mood_from_emotion(emotion):
-        """Update mood given a single emotion."""
-        pass
-
-    def tick_mood():
+    def tick_mood(self):
         """Update mood state."""
-        # Update emotion amounts
-        # Decay mood towards baseline
+        # Decay emotion amounts
+        decayed_emotions = []
+        for emotion in self.emotions:
+            emotion.amount /= 2
+            # Remove any emotions below the perceptible threshold
+            if emotion.amount > EMOTION_THRESHOLD:
+                decayed_emotions.append(emotion)
+        self.emotions = decayed_emotions
+
+        # Set a new mood based on decayed emotions
+        mood = self.personality.to_mood()
+        mood.update_from_emotions(decayed_emotions)
+        self.mood = mood

@@ -15,9 +15,10 @@ class Mood(object):
         self.a = self.a + other.a
         self.d = self.d + other.d
 
-    def add_emotion(self, emotion):
-        emotion_mood = emotion.to_mood()
-        self.add_mood(emotion_mood)
+    def update_from_emotions(self, emotions):
+        for emotion in emotions:
+            emotion_mood = emotion.to_mood()
+            self.add_mood(emotion_mood)
 
     def __str__(self):
         """

@@ -10,9 +10,9 @@ class TestMood(TestCase):
         mood_string = str(mood)
         self.assertEqual(mood_string, "Relaxed")
 
-    def test_add_emotion(self):
+    def test_update_from_emotions(self):
         mood = Mood(.1, .1, .1)
         self.assertEqual(str(mood), "Exuberant")
         emotion = Gloating(.5)
-        mood.add_emotion(emotion)
+        mood.update_from_emotions([emotion])
         self.assertEqual(str(mood), "Relaxed")
