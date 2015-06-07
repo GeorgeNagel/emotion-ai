@@ -3,8 +3,8 @@ print sys.path
 
 from unittest import TestCase
 
-from ai.core.beliefs import Beliefs, Entity, \
-    EntityAttrBelief, EntityEntityBelief
+from ai.core.beliefs import Beliefs, Entity, EntityAttrBelief, \
+    EntityEntityBelief, BeliefNotFound
 
 
 class TestBeliefs(TestCase):
@@ -34,11 +34,11 @@ class TestBeliefs(TestCase):
         beliefs.register_entity(entity)
         # Set a belief
         self.assertEqual(beliefs.beliefs_count(), 0)
-        belief_1 = EntityAttrBelief(entity, 'alive', True)
+        belief_1 = EntityAttrBelief(entity, 'alive', 1)
         beliefs.set_belief(belief_1)
         self.assertEqual(beliefs.beliefs_count(), 1)
         # Overwrite the belief
-        belief_2 = EntityAttrBelief(entity, 'alive', False)
+        belief_2 = EntityAttrBelief(entity, 'alive', 0)
         beliefs.set_belief(belief_2)
         self.assertEqual(beliefs.beliefs_count(), 1)
 
@@ -59,9 +59,42 @@ class TestBeliefs(TestCase):
         beliefs.set_belief(belief_2)
         self.assertEqual(beliefs.beliefs_count(), 1)
 
+    def test_get_unknown_entity_attr(self):
+        """
+        Test that an exception is raised when getting an attr
+        of an unknown entity.
+        """
+        beliefs = Beliefs()
+        entity = Entity()
+        with self.assertRaises(Exception):
+            beliefs.get_entity_attr(entity, 'alive')
+
+    def test_get_entity_attr_belief_not_found(self):
+        """Test an exception is raised when no such belief exists."""
+        beliefs = Beliefs()
+        entity = Entity()
+        beliefs.register_entity(entity)
+        with self.assertRaises(BeliefNotFound):
+            beliefs.get_entity_attr(entity, 'likes_icecream')
+
+    def test_get_entity_attr_belief(self):
+        """Test that you can get entity attrs with defaults."""
+        beliefs = Beliefs()
+        entity = Entity()
+        beliefs.register_entity(entity)
+        # Set an attr belief
+        belief = EntityAttrBelief(entity, 'likes_icecream', 1)
+        beliefs.set_belief(belief)
+        # Get the attr back
+        likes_icecream = beliefs.get_entity_attr(entity, 'likes_icecream')
+        self.assertEqual(likes_icecream, 1)
+        # Get an unset attr with defaults
+        alive = beliefs.get_entity_attr(entity, 'alive', default=1)
+        self.assertEqual(alive, 1)
+
     def test_revise_belief(self):
         """
-        agent 1 kills red knight.
+        agent 1 believes red knight is dead.
         agent 1 believes agent 2 is alive.
         agent 1 then believes red knight is agent 2.
         agent 1 believes agent 2 is not alive.

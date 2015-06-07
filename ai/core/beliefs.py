@@ -52,6 +52,24 @@ class Beliefs(object):
     def beliefs_count(self):
         return(len(self.beliefs))
 
+    def get_entity_attr(self, entity, attr, default=None):
+        if entity not in self.known_entities:
+            raise Exception("Unknown entity: %s" % entity)
+        for b in self.beliefs:
+            if isinstance(b, EntityAttrBelief):
+                if b.entity == entity and b.attr == attr:
+                    return b.value
+
+        # Exhausted the search but no match found
+        if default is None:
+            raise BeliefNotFound
+        else:
+            return default
+
+
+class BeliefNotFound(Exception):
+    pass
+
 
 class Belief(object):
     causing_belief = None
@@ -72,11 +90,6 @@ class EntityEntityBelief(Belief):
         self.entity_2 = entity_2
         self.relationship = relationship
         self.value = value
-
-
-class ActionBelief(Belief):
-    """Belief that an action occurred."""
-    pass
 
 
 class Entity(object):
