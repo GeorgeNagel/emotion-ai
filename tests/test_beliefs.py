@@ -3,8 +3,9 @@ print sys.path
 
 from unittest import TestCase
 
+from ai.core.agent import Agent
 from ai.core.beliefs import Beliefs, Entity, EntityAttrBelief, \
-    EntityEntityBelief, BeliefNotFound
+    EntityEntityBelief, BeliefNotFound, RELATIONSHIPS
 
 
 class TestBeliefs(TestCase):
@@ -22,7 +23,7 @@ class TestBeliefs(TestCase):
         """
         beliefs = Beliefs()
         entity = Entity()
-        belief = EntityAttrBelief(entity, 'alive', True)
+        belief = EntityAttrBelief(0, entity, 'alive', True)
         with self.assertRaises(Exception):
             beliefs.set_belief(belief)
 
@@ -34,11 +35,11 @@ class TestBeliefs(TestCase):
         beliefs.register_entity(entity)
         # Set a belief
         self.assertEqual(beliefs.beliefs_count(), 0)
-        belief_1 = EntityAttrBelief(entity, 'alive', 1)
+        belief_1 = EntityAttrBelief(0, entity, 'alive', 1)
         beliefs.set_belief(belief_1)
         self.assertEqual(beliefs.beliefs_count(), 1)
         # Overwrite the belief
-        belief_2 = EntityAttrBelief(entity, 'alive', 0)
+        belief_2 = EntityAttrBelief(1, entity, 'alive', 0)
         beliefs.set_belief(belief_2)
         self.assertEqual(beliefs.beliefs_count(), 1)
 
@@ -51,11 +52,11 @@ class TestBeliefs(TestCase):
         beliefs.register_entity(entity_1)
         beliefs.register_entity(entity_2)
         # Set a belief
-        belief_1 = EntityEntityBelief(entity_1, entity_2, 'is', 1)
+        belief_1 = EntityEntityBelief(0, entity_1, entity_2, RELATIONSHIPS.IS, 1)
         beliefs.set_belief(belief_1)
         self.assertEqual(beliefs.beliefs_count(), 1)
         # Overwrite the belief
-        belief_2 = EntityEntityBelief(entity_1, entity_2, 'is', 0)
+        belief_2 = EntityEntityBelief(1, entity_1, entity_2, RELATIONSHIPS.IS, 0)
         beliefs.set_belief(belief_2)
         self.assertEqual(beliefs.beliefs_count(), 1)
 
@@ -83,7 +84,7 @@ class TestBeliefs(TestCase):
         entity = Entity()
         beliefs.register_entity(entity)
         # Set an attr belief
-        belief = EntityAttrBelief(entity, 'likes_icecream', 1)
+        belief = EntityAttrBelief(0, entity, 'likes_icecream', 1)
         beliefs.set_belief(belief)
         # Get the attr back
         likes_icecream = beliefs.get_entity_attr(entity, 'likes_icecream')
@@ -99,8 +100,41 @@ class TestBeliefs(TestCase):
         agent 1 then believes red knight is agent 2.
         agent 1 believes agent 2 is not alive.
         """
-        pass
+        agent_1 = Agent(0, 0, 0, 0, 0)
+        red_knight_entity = Entity()
+        agent_2_entity = Entity()
+        agent_1.beliefs.register_entity(red_knight_entity)
+        agent_1.beliefs.register_entity(agent_2_entity)
+        # agent_1 beliefs agent_2 is alive
+        agent_2_alive = EntityAttrBelief(0, agent_2_entity, 'alive', 1)
+        agent_1.beliefs.set_belief(agent_2_alive)
 
-    def test_entity_is_entity(self):
-        """Test that entity 1 is entity 2 works."""
-        pass
+        # agent_1 believes red knight is not alive
+        red_knight_dead = EntityAttrBelief(1, red_knight_entity, 'alive', 0)
+        agent_1.beliefs.set_belief(red_knight_dead)
+
+        # agent_1 believes red knight is agent_2
+        agent_1.beliefs.set_entity_is_entity(2, red_knight_entity, agent_2_entity, 1)
+
+        # Check that agent 1 believes that agent 2 is not alive
+        agent_2_alive = agent_1.beliefs.get_entity_attr(agent_2_entity, 'alive')
+        self.assertEqual(agent_2_alive, 0)
+
+    def test_all_related_entities(self):
+        """Test that all related entities are returned using 'is' relationship."""
+        beliefs = Beliefs()
+        entity_1 = Entity()
+        beliefs.register_entity(entity_1)
+        entity_2 = Entity()
+        beliefs.register_entity(entity_2)
+        entity_3 = Entity()
+        beliefs.register_entity(entity_3)
+
+        beliefs.set_entity_is_entity(0, entity_1, entity_2, 1)
+        beliefs.set_entity_is_entity(0, entity_2, entity_3, 1)
+
+        related_entities = beliefs.get_related_entities(entity_1)
+        self.assertEqual(len(related_entities), 3)
+        self.assertIn(entity_1, related_entities)
+        self.assertIn(entity_2, related_entities)
+        self.assertIn(entity_3, related_entities)
