@@ -1,7 +1,7 @@
+from ai.core.beliefs import Beliefs
 from ai.core.emotion import Love, Hate, Pride, Remorse, Anger, Gratitude, \
     HappyFor, SorryFor, Gloating, Resentment, Joy, Distress, Hope, Fear, \
     Relief, Disappointment
-
 from ai.core.preferences import Preferences
 from ai.core.personality import Personality
 from ai.core.obj import Object
@@ -12,6 +12,7 @@ EMOTION_THRESHOLD = .01
 class Agent(Object):
     """An object that has a mood."""
     culture = None
+    beliefs = None
 
     def __init__(self, o, c, e, a, n):
         self.personality = Personality(o, c, e, a, n)
@@ -19,6 +20,7 @@ class Agent(Object):
         self.emotions = []
         # Like/dislike relationships with objects
         self.relationships = {}
+        self.beliefs = Beliefs()
         super(Agent, self).__init__()
 
     def set_preferences(self, preferences):

@@ -5,16 +5,22 @@ from unittest import TestCase
 
 from ai.core.action import Action
 from ai.core.agent import Agent
+from ai.core.beliefs import Beliefs
 from ai.core.emotion import Joy, Remorse, Gloating
 from ai.core.preferences import Preferences
 
 
 class TestAgent(TestCase):
-    def test_init(self):
+    def test_uuid(self):
         """New agents should have a uuid."""
         agent = Agent(0, 0, 0, 0, 0)
         uuid = getattr(agent, "uuid")
         self.assertIsInstance(uuid, basestring)
+
+    def test_beliefs(self):
+        """New agents should have beliefs."""
+        agent = Agent(0, 0, 0, 0, 0)
+        self.assertIsInstance(agent.beliefs, Beliefs)
 
     def test_from_OCEAN(self):
         """Create an agent given a personality."""
