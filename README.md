@@ -10,7 +10,7 @@ $ virtualenv/bin/pip install -r requirements.txt
 ## Run the test suite
 
 ```bash
-$ sh test.sh
+$ sh run_tests.sh
 ```
 
 # Taxonomy

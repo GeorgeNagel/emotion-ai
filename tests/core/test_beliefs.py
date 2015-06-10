@@ -52,11 +52,13 @@ class TestBeliefs(TestCase):
         beliefs.register_entity(entity_1)
         beliefs.register_entity(entity_2)
         # Set a belief
-        belief_1 = EntityEntityBelief(0, entity_1, entity_2, RELATIONSHIPS.IS, 1)
+        belief_1 = EntityEntityBelief(
+            0, entity_1, entity_2, RELATIONSHIPS.IS, 1)
         beliefs.set_belief(belief_1)
         self.assertEqual(beliefs.beliefs_count(), 1)
         # Overwrite the belief
-        belief_2 = EntityEntityBelief(1, entity_1, entity_2, RELATIONSHIPS.IS, 0)
+        belief_2 = EntityEntityBelief(
+            1, entity_1, entity_2, RELATIONSHIPS.IS, 0)
         beliefs.set_belief(belief_2)
         self.assertEqual(beliefs.beliefs_count(), 1)
 
@@ -114,14 +116,16 @@ class TestBeliefs(TestCase):
         agent_1.beliefs.set_belief(red_knight_dead)
 
         # agent_1 believes red knight is agent_2
-        agent_1.beliefs.set_entity_is_entity(2, red_knight_entity, agent_2_entity, 1)
+        agent_1.beliefs.set_entity_is_entity(
+            2, red_knight_entity, agent_2_entity, 1)
 
         # Check that agent 1 believes that agent 2 is not alive
-        agent_2_alive = agent_1.beliefs.get_entity_attr(agent_2_entity, 'alive')
+        agent_2_alive = agent_1.beliefs.get_entity_attr(
+            agent_2_entity, 'alive')
         self.assertEqual(agent_2_alive, 0)
 
     def test_all_related_entities(self):
-        """Test that all related entities are returned using 'is' relationship."""
+        """Test that all related entities are returned using 'is'."""
         beliefs = Beliefs()
         entity_1 = Entity()
         beliefs.register_entity(entity_1)
