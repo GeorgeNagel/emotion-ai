@@ -1,3 +1,5 @@
+import random
+
 from ai.core.beliefs import Beliefs
 from ai.core.emotion import Love, Hate, Pride, Remorse, Anger, Gratitude, \
     HappyFor, SorryFor, Gloating, Resentment, Joy, Distress, Hope, Fear, \
@@ -5,6 +7,7 @@ from ai.core.emotion import Love, Hate, Pride, Remorse, Anger, Gratitude, \
 from ai.core.preferences import Preferences
 from ai.core.personality import Personality
 from ai.core.obj import Object
+from ai.name_gen.new_names import generate_names
 
 EMOTION_THRESHOLD = .01
 
@@ -203,3 +206,19 @@ class Agent(Object):
     def add_child(self, child):
         if child not in self.children:
             self.children.append(child)
+
+
+def create_random_agent(gender=None):
+    """Create a first-generation agent."""
+    # Randomize the personality
+    o = random.random()*2 - 1
+    c = random.random()*2 - 1
+    e = random.random()*2 - 1
+    a = random.random()*2 - 1
+    n = random.random()*2 - 1
+    agent = Agent(o, c, e, a, n)
+    if gender is None:
+        gender = random.choice([GENDERS.MALE, GENDERS.FEMALE])
+    agent.gender = gender
+    agent.name = generate_names(gender, 1)[0]
+    return agent

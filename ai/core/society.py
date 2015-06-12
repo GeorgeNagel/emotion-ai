@@ -1,7 +1,7 @@
 """Create agents and relationships."""
 import random
 
-from ai.core.agent import Agent, GENDERS
+from ai.core.agent import Agent, GENDERS, create_random_agent
 from ai.core.personality import combine_personalities
 from ai.name_gen.new_names import generate_names
 
@@ -21,8 +21,7 @@ def create_society():
     first_generation = []
     while len(first_generation) < SEED_GENERATION_SIZE - 1:
         # Create seed generation agent
-        gender = random.choice([GENDERS.MALE, GENDERS.FEMALE])
-        agent = create_seed_generation_agent(gender)
+        agent = create_random_agent()
         first_generation.append(agent)
 
     generations = [first_generation]
@@ -38,20 +37,6 @@ def create_society():
     for generation in generations:
         agents.extend(generation)
     return agents
-
-
-def create_seed_generation_agent(gender):
-    """Create a first-generation agent."""
-    # Randomize the personality
-    o = random.random()*2 - 1
-    c = random.random()*2 - 1
-    e = random.random()*2 - 1
-    a = random.random()*2 - 1
-    n = random.random()*2 - 1
-    agent = Agent(o, c, e, a, n)
-    agent.gender = gender
-    agent.name = generate_names(gender, 1)[0]
-    return agent
 
 
 def create_generation(previous_generation, children_per_parents):
