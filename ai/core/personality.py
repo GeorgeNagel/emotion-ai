@@ -1,3 +1,5 @@
+import random
+
 from mood import Mood
 
 
@@ -33,3 +35,20 @@ class Personality(object):
         p, a, d = self._to_pad()
         mood = Mood(p, a, d)
         return mood
+
+
+def combine_personalities(personality_1, personality_2, variation):
+    """Combine two personalities (e.g. when creating a child)."""
+    o = _random_range(personality_1.o, personality_2.o, variation)
+    c = _random_range(personality_1.c, personality_2.c, variation)
+    e = _random_range(personality_1.e, personality_2.e, variation)
+    a = _random_range(personality_1.a, personality_2.a, variation)
+    n = _random_range(personality_1.n, personality_2.n, variation)
+    return Personality(o, c, e, a, n)
+
+
+def _random_range(value_1, value_2, variation):
+    range_ = abs(value_1 - value_2) + variation
+    min_value = min(value_1, value_2)
+    random_value = random.random()*range_ + min_value - variation/2.0
+    return random_value

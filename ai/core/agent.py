@@ -9,10 +9,20 @@ from ai.core.obj import Object
 EMOTION_THRESHOLD = .01
 
 
+class GENDERS(object):
+    MALE = 'male'
+    FEMALE = 'female'
+
+
 class Agent(Object):
     """An object that has a mood."""
-    culture = None
     beliefs = None
+    children = None
+    culture = None
+    emotions = None
+    mood = None
+    parents = None
+    personality = None
 
     def __init__(self, o, c, e, a, n):
         self.personality = Personality(o, c, e, a, n)
@@ -21,7 +31,13 @@ class Agent(Object):
         # Like/dislike relationships with objects
         self.relationships = {}
         self.beliefs = Beliefs()
+        self.children = []
         super(Agent, self).__init__()
+
+    @classmethod
+    def from_personality(cls, p):
+        agent = Agent(p.o, p.c, p.e, p.a, p.n)
+        return agent
 
     def set_preferences(self, preferences):
         assert(isinstance(preferences, Preferences))
@@ -178,3 +194,12 @@ class Agent(Object):
         mood = self.personality.to_mood()
         mood.update_from_emotions(decayed_emotions)
         self.mood = mood
+
+    def set_parents(self, parent_1, parent_2):
+        if not isinstance(parent_1, Agent) or not isinstance(parent_2, Agent):
+            raise ValueError("Parents must be agents")
+        self.parents = [parent_1, parent_2]
+
+    def add_child(self, child):
+        if child not in self.children:
+            self.children.append(child)
