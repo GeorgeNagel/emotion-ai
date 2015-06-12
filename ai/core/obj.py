@@ -30,3 +30,13 @@ class Object(object):
         self.uuid = unique_id
         # Register the object
         object_registry[self.uuid] = self
+
+    @property
+    def entity_id(self):
+        """
+        Return a entity_id.
+
+        This should be return a different value for every different concept
+        that this object could be perceived as.
+        """
+        return self.uuid
