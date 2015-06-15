@@ -21,13 +21,13 @@ class Preferences(object):
         self._set_praiseworthiness(action, p)
         self._set_goodness(action, g)
 
-    def register_object(self, obj, l=0):
+    def register_entity(self, entity, l=0):
         """
-        Register an object to a Preferences.
-        obj - the object being registered
-        l - the love/hate of the object. [-1, 1]
+        Register an entity to a Preferences.
+        entity - the entity being registered
+        l - the love/hate of the entity. [-1, 1]
         """
-        self._set_love(obj, l)
+        self.set_love(entity, l)
 
     def set_praiseworthiness(self, action, p):
         """Set the default valence of being the subject of an action."""
@@ -47,11 +47,11 @@ class Preferences(object):
     def get_goodness(self, action):
         return self.goodness_registry[action.name]
 
-    def set_love(self, obj, l):
-        """Set the default love/hate value of an object."""
+    def set_love(self, entity, l):
+        """Set the default love/hate value of an entity."""
         if l < -1 or l > 1:
             raise ValueError()
-        self.love_registry[obj.uuid] = l
+        self.love_registry[entity.entity_id] = l
 
-    def get_love(self, obj):
-        return self.love_registry[obj.uuid]
+    def get_love(self, entity):
+        return self.love_registry[entity.entity_id]
