@@ -207,18 +207,18 @@ class Agent(Object):
         if child not in self.children:
             self.children.append(child)
 
-
-def create_random_agent(gender=None):
-    """Create a first-generation agent."""
-    # Randomize the personality
-    o = random.random()*2 - 1
-    c = random.random()*2 - 1
-    e = random.random()*2 - 1
-    a = random.random()*2 - 1
-    n = random.random()*2 - 1
-    agent = Agent(o, c, e, a, n)
-    if gender is None:
-        gender = random.choice([GENDERS.MALE, GENDERS.FEMALE])
-    agent.gender = gender
-    agent.name = generate_names(gender, 1)[0]
-    return agent
+    @classmethod
+    def create_random_agent(cls, gender=None):
+        """Create a first-generation agent."""
+        # Randomize the personality
+        o = random.random()*2 - 1
+        c = random.random()*2 - 1
+        e = random.random()*2 - 1
+        a = random.random()*2 - 1
+        n = random.random()*2 - 1
+        agent = cls(o, c, e, a, n)
+        if gender is None:
+            gender = random.choice([GENDERS.MALE, GENDERS.FEMALE])
+        agent.gender = gender
+        agent.name = generate_names(gender, 1)[0]
+        return agent

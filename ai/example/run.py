@@ -1,21 +1,28 @@
 from copy import deepcopy
 
 from ai.example.preferences import culture
-from ai.core.agent import Agent
+from ai.example.agent import ExampleAgent
 
-frank = Agent(0, -.1, 0, 0, 0)
-frank.name = "Frank"
-frank.set_preferences(deepcopy(culture))
 
-al = Agent(0, 1, 1, 0, -1)
-al.name = "Al"
-al.set_preferences(deepcopy(culture))
+balin = ExampleAgent.create_random_agent()
+balin.name = "Balin"
+balin.set_preferences(deepcopy(culture))
 
-# Al likes Frank
-al.get_preferences().set_love(frank, .25)
+balan = ExampleAgent.create_random_agent()
+balan.name = "Balan"
+balan.set_preferences(deepcopy(culture))
 
-# Frank hates Al
-frank.get_preferences().set_love(al, -1)
+# They know that they are brothers
 
-print "Al's initial mood: %s" % al.mood
-print "Frank's initial mood: %s" % frank.mood
+# They like each other, because they know they are brothers
+# and brothers generally like each other
+
+# They are both disguised
+
+# They both dislike or are indifferent to the disguised versions of themselves
+
+# They each know they just killed and were killed by the disguised characters
+
+# They both find out that who the disguised people are
+
+# They are sad about killing each other.

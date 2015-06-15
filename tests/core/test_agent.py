@@ -4,7 +4,7 @@ print sys.path
 from unittest import TestCase
 
 from ai.core.action import Action
-from ai.core.agent import Agent, create_random_agent
+from ai.core.agent import Agent
 from ai.core.beliefs import Beliefs
 from ai.core.emotion import Joy, Remorse, Gloating
 from ai.core.preferences import Preferences
@@ -73,5 +73,5 @@ class TestAgent(TestCase):
         self.assertEqual(str(agent.mood), "Disdainful")
 
     def test_create_random_agent(self):
-        agent = create_random_agent()
+        agent = Agent.create_random_agent()
         self.assertIsInstance(agent.name, basestring)
