@@ -6,7 +6,7 @@ from unittest import TestCase
 from ai.core.action import Action
 from ai.core.agent import Agent
 from ai.core.beliefs import Beliefs
-from ai.core.emotion import Joy, Remorse, Gloating
+from ai.core.emotion import Joy, Remorse, Gloating, Anger
 from ai.core.preferences import Preferences
 
 
@@ -55,6 +55,26 @@ class TestAgent(TestCase):
         emotion_2 = emotions.pop()
         self.assertIsInstance(emotion_2, Remorse)
         self.assertEqual(emotion_2.amount, 1)
+
+    def test_emotions_for_action(self):
+        subject = Agent(0, 0, 0, 0, 0)
+        obj = Agent(0, 0, 0, 0, 0)
+        observer = Agent(0, 0, 0, 0, 0)
+
+        hit = Action()
+        hit.name = "Hit"
+
+        preferences = observer.get_preferences()
+        preferences.set_goodness(hit, -1)
+        preferences.set_praiseworthiness(hit, -1)
+        preferences.set_love(subject, 1)
+        preferences.set_love(obj, -1)
+
+        prob = 1
+        emotions = observer.emotions_for_action(hit, subject, obj, prob)
+        self.assertEqual(len(emotions), 2)
+        self.assertIsInstance(emotions[0], Anger)
+        self.assertIsInstance(emotions[1], Gloating)
 
     def test_tick_mood(self):
         agent = Agent(.01, -.01, .01, -.01, .01)

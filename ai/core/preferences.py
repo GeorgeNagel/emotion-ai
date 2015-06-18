@@ -36,7 +36,14 @@ class Preferences(object):
         self.praiseworthiness_registry[action.name] = p
 
     def get_praiseworthiness(self, action):
-        return self.praiseworthiness_registry[action.name]
+        if action.name in self.praiseworthiness_registry:
+            return self.praiseworthiness_registry[action.name]
+        else:
+            raise KeyError(
+                "%s not found. Use the set_praiseworthiness() method"
+                " to associate a praiseworthiness with this action."
+                % action.name
+            )
 
     def set_goodness(self, action, g):
         """Set the default valence of being the object of an action."""
@@ -45,7 +52,14 @@ class Preferences(object):
         self.goodness_registry[action.name] = g
 
     def get_goodness(self, action):
-        return self.goodness_registry[action.name]
+        if action.name in self.goodness_registry:
+            return self.goodness_registry[action.name]
+        else:
+            raise KeyError(
+                "%s not found. Use the set_goodness() method"
+                " to associate a goodness with this action."
+                % action.name
+            )
 
     def set_love(self, entity, l):
         """Set the default love/hate value of an entity."""
@@ -54,4 +68,11 @@ class Preferences(object):
         self.love_registry[entity.entity_id] = l
 
     def get_love(self, entity):
-        return self.love_registry[entity.entity_id]
+        if entity.entity_id in self.love_registry:
+            return self.love_registry[entity.entity_id]
+        else:
+            raise KeyError(
+                "%s not found. Use the set_love() method"
+                " to associate a love level with this entity."
+                % entity
+            )

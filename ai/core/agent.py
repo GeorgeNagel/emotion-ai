@@ -26,6 +26,7 @@ class Agent(Object):
     mood = None
     parents = None
     personality = None
+    _preferences = None
 
     def __init__(self, o, c, e, a, n):
         self.personality = Personality(o, c, e, a, n)
@@ -44,10 +45,12 @@ class Agent(Object):
 
     def set_preferences(self, preferences):
         assert(isinstance(preferences, Preferences))
-        self.preferences = preferences
+        self._preferences = preferences
 
     def get_preferences(self):
-        return self.preferences
+        if self._preferences is None:
+            self._preferences = Preferences()
+        return self._preferences
 
     def emotions_for_object(self, obj):
         emotions = []
@@ -100,10 +103,11 @@ class Agent(Object):
                 action, agent, obj
             )
             emotions.extend(confirmed_outcome_emotions)
+        return emotions
 
     def _expected_joy_distress(self, action, agent, obj):
         """Calculate the expected joy and distress at an actions success."""
-        emotions = self.emotions_for_observed_action(action, agent, obj)
+        emotions = self._emotions_for_observed_action(action, agent, obj)
         j = None
         d = None
         for e in emotions:
