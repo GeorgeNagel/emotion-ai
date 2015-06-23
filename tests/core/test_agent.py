@@ -28,27 +28,34 @@ class TestAgent(TestCase):
         self.assertEqual(str(agent.mood), "Disdainful")
 
     def test_set_get_preferences(self):
+        action = Action()
+        action.name = "test_action"
         p = Preferences()
+        p.set_goodness(action, 1)
         agent = Agent(0, 0, 0, 0, 0)
         agent.set_preferences(p)
+
         p_returned = agent.get_preferences()
-        self.assertEqual(p, p_returned)
+        self.assertEqual(p_returned.get_goodness(action), 1)
 
     def test_emotions_for_observed_action(self):
-        p = Preferences()
         agent_1 = Agent(0, 0, 0, 0, 0)
-        agent_1.set_preferences(p)
         agent_2 = Agent(-1, -1, 1, -1, 1)
-        agent_2.set_preferences(p)
         action = Action()
         action.name = "Hit"
+
+        p = Preferences()
         p.set_goodness(action, -.5)
         p.set_praiseworthiness(action, -1)
-        p.set_love(agent_2, -.5)
+        p.set_love(agent_2.entity_id, -.5)
+
+        agent_1.set_preferences(p)
+        agent_2.set_preferences(p)
 
         emotions = agent_1._emotions_for_observed_action(
-            action, agent_1, agent_2
+            action, agent_1.entity_id, agent_2.entity_id
         )
+        self.assertEqual(len(emotions), 2)
         emotion_1 = emotions.pop()
         self.assertIsInstance(emotion_1, Gloating)
         self.assertEqual(emotion_1.amount, .25)
@@ -67,11 +74,11 @@ class TestAgent(TestCase):
         preferences = observer.get_preferences()
         preferences.set_goodness(hit, -1)
         preferences.set_praiseworthiness(hit, -1)
-        preferences.set_love(subject, 1)
-        preferences.set_love(obj, -1)
+        preferences.set_love(subject.entity_id, 1)
+        preferences.set_love(obj.entity_id, -1)
 
         prob = 1
-        emotions = observer.emotions_for_action(hit, subject, obj, prob)
+        emotions = observer.emotions_for_action(hit, subject.entity_id, obj.entity_id, prob)
         self.assertEqual(len(emotions), 2)
         self.assertIsInstance(emotions[0], Anger)
         self.assertIsInstance(emotions[1], Gloating)

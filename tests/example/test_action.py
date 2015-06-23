@@ -10,8 +10,8 @@ class TestAction(TestCase):
         object_agent = Agent(0, 0, 0, 0, 0)
         viewer_agent = Agent(0, 0, 0, 0, 0)
         viewer_preferences = viewer_agent.get_preferences()
-        viewer_preferences.set_love(subject_agent, 1)
-        viewer_preferences.set_love(object_agent, 1)
+        viewer_preferences.set_love(subject_agent.entity_id, 1)
+        viewer_preferences.set_love(object_agent.entity_id, 1)
         viewer_preferences.set_praiseworthiness(Kill, -1)
         viewer_preferences.set_goodness(Kill, -1)
         apply_action(

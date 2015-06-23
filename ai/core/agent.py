@@ -1,3 +1,4 @@
+from copy import deepcopy
 import random
 
 from ai.core.beliefs import Beliefs
@@ -44,8 +45,9 @@ class Agent(Object):
         return agent
 
     def set_preferences(self, preferences):
-        assert(isinstance(preferences, Preferences))
-        self._preferences = preferences
+        agent_preferences = deepcopy(preferences)
+        assert(isinstance(agent_preferences, Preferences))
+        self._preferences = agent_preferences
 
     def get_preferences(self):
         if self._preferences is None:
@@ -64,14 +66,16 @@ class Agent(Object):
             emotions.append(e)
         return emotions
 
-    def emotions_for_action(self, action, agent, obj, prob, prior_prob=None):
+    def emotions_for_action(self, action, agent_entity_id, obj_entity_id, prob, prior_prob=None):
         """
         Generate a list of emotions for actions based on
         probability of the action happening.
         """
+        assert(isinstance(agent_entity_id, basestring))
+        assert(isinstance(obj_entity_id, basestring))
         emotions = []
         # Calculate the expected joy/distress at an event's success
-        joy_distress = self._expected_joy_distress(action, agent, obj)
+        joy_distress = self._expected_joy_distress(action, agent_entity_id, obj_entity_id)
         if prob > 0 and prob < 1:
             if 'joy' in joy_distress:
                 # Possible joyful event
@@ -100,14 +104,16 @@ class Agent(Object):
 
         if prob == 1:
             confirmed_outcome_emotions = self._emotions_for_observed_action(
-                action, agent, obj
+                action, agent_entity_id, obj_entity_id
             )
             emotions.extend(confirmed_outcome_emotions)
         return emotions
 
-    def _expected_joy_distress(self, action, agent, obj):
+    def _expected_joy_distress(self, action, agent_entity_id, obj_entity_id):
         """Calculate the expected joy and distress at an actions success."""
-        emotions = self._emotions_for_observed_action(action, agent, obj)
+        assert(isinstance(agent_entity_id, basestring))
+        assert(isinstance(obj_entity_id, basestring))
+        emotions = self._emotions_for_observed_action(action, agent_entity_id, obj_entity_id)
         j = None
         d = None
         for e in emotions:
@@ -122,7 +128,9 @@ class Agent(Object):
             hope_fear['distress'] = d
         return hope_fear
 
-    def _emotions_for_observed_action(self, action, agent, obj):
+    def _emotions_for_observed_action(self, action, agent_entity_id, obj_entity_id):
+        assert(isinstance(agent_entity_id, basestring))
+        assert(isinstance(obj_entity_id, basestring))
         emotions = []
         preferences = self.get_preferences()
         if preferences is None:
@@ -130,9 +138,9 @@ class Agent(Object):
 
         p = preferences.get_praiseworthiness(action)
         g = preferences.get_goodness(action)
-        l = preferences.get_love(obj)
+        l = preferences.get_love(obj_entity_id)
 
-        if agent == self:
+        if agent_entity_id == self.entity_id:
             # Self-initiated
             if p > 0:
                 # Praiseworthy
@@ -153,37 +161,36 @@ class Agent(Object):
                 e = Anger(-1*p)
                 emotions.append(e)
 
-        if isinstance(obj, Agent):
-            if obj == self:
+        if obj_entity_id == self.entity_id:
+            if g > 0:
+                # Good thing happened
+                e = Joy(g)
+                emotions.append(e)
+            if g < 0:
+                # Bad thing happened
+                e = Distress(-1*g)
+                emotions.append(e)
+        else:
+            if l > 0:
+                # Something happened to a liked agent
                 if g > 0:
                     # Good thing happened
-                    e = Joy(g)
+                    e = HappyFor(l*g)
                     emotions.append(e)
                 if g < 0:
                     # Bad thing happened
-                    e = Distress(-1*g)
+                    e = SorryFor(l*g*-1)
                     emotions.append(e)
-            else:
-                if l > 0:
-                    # Something happened to a liked agent
-                    if g > 0:
-                        # Good thing happened
-                        e = HappyFor(l*g)
-                        emotions.append(e)
-                    if g < 0:
-                        # Bad thing happened
-                        e = SorryFor(l*g*-1)
-                        emotions.append(e)
-                if l < 0:
-                    # Something happened to a disliked agent
-                    if g > 0:
-                        # Good thing happened
-                        e = Resentment(-1*l*g)
-                        emotions.append(e)
-                    if g < 0:
-                        # Bad thing happened
-                        e = Gloating(l*g)
-                        emotions.append(e)
+            if l < 0:
+                # Something happened to a disliked agent
+                if g > 0:
+                    # Good thing happened
+                    e = Resentment(-1*l*g)
+                    emotions.append(e)
+                if g < 0:
+                    # Bad thing happened
+                    e = Gloating(l*g)
+                    emotions.append(e)
         return emotions
 
     def tick_mood(self):

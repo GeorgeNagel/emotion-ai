@@ -21,13 +21,14 @@ class Preferences(object):
         self._set_praiseworthiness(action, p)
         self._set_goodness(action, g)
 
-    def register_entity(self, entity, l=0):
+    def register_entity(self, entity_id, l=0):
         """
         Register an entity to a Preferences.
-        entity - the entity being registered
+        entity_id - the entity id being registered
         l - the love/hate of the entity. [-1, 1]
         """
-        self.set_love(entity, l)
+        assert(isinstance(entity_id, basestring))
+        self.set_love(entity_id, l)
 
     def set_praiseworthiness(self, action, p):
         """Set the default valence of being the subject of an action."""
@@ -61,18 +62,20 @@ class Preferences(object):
                 % action.name
             )
 
-    def set_love(self, entity, l):
-        """Set the default love/hate value of an entity."""
+    def set_love(self, entity_id, l):
+        """Set the default love/hate value of an entity id."""
+        assert(isinstance(entity_id, basestring))
         if l < -1 or l > 1:
             raise ValueError()
-        self.love_registry[entity.entity_id] = l
+        self.love_registry[entity_id] = l
 
-    def get_love(self, entity):
-        if entity.entity_id in self.love_registry:
-            return self.love_registry[entity.entity_id]
+    def get_love(self, entity_id):
+        assert(isinstance(entity_id, basestring))
+        if entity_id in self.love_registry:
+            return self.love_registry[entity_id]
         else:
             raise KeyError(
                 "%s not found. Use the set_love() method"
-                " to associate a love level with this entity."
-                % entity
+                " to associate a love level with this entity id."
+                % entity_id
             )

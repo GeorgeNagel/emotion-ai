@@ -65,19 +65,19 @@ class TestSetLove(TestCase):
         p = Preferences()
         o = Object()
         with self.assertRaises(ValueError):
-            p.set_love(o, -20)
+            p.set_love(o.entity_id, -20)
 
     def test_upper_limit(self):
         p = Preferences()
         o = Object()
         with self.assertRaises(ValueError):
-            p.set_love(o, 20)
+            p.set_love(o.entity_id, 20)
 
 
 class TestGetLove(TestCase):
     def test_get_love(self):
         p = Preferences()
         o = Object()
-        p.set_love(o, 1)
-        l = p.get_love(o)
+        p.set_love(o.entity_id, 1)
+        l = p.get_love(o.entity_id)
         self.assertEqual(l, 1)
