@@ -32,10 +32,10 @@ def apply_action(action=None, subject=None, obj=None, viewers=None):
     assert(isinstance(subject, Object))
     assert(isinstance(obj, Object))
     assert(isinstance(viewers, list))
+    action.register_viewer_beliefs(
+        subject=subject, obj=obj, viewers=viewers
+    )
     for viewer in viewers:
-        action.register_viewer_beliefs(
-            subject=subject, obj=obj, viewers=viewers
-        )
         prob = 1
         new_emotions = viewer.emotions_for_action(
             action, subject.entity_id, obj.entity_id, prob)

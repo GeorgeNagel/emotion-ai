@@ -8,6 +8,12 @@ class Emotion(object):
             raise ValueError()
         self.amount = amount
 
+    def __str__(self):
+        return "%s (%s)" % (self.__class__.__name__, self.amount)
+
+    def __repr__(self):
+        return self.__str__()
+
     def _to_pad(self):
         raise NotImplementedError
 
@@ -96,6 +102,7 @@ class Remorse(Emotion):
 
 class Anger(Emotion):
     """About an other-initiated blameworthy act."""
+
     def _to_pad(self):
         return (-.51, .59, .25)
 

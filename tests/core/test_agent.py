@@ -6,7 +6,7 @@ from unittest import TestCase
 from ai.core.action import Action
 from ai.core.agent import Agent
 from ai.core.beliefs import Beliefs
-from ai.core.emotion import Joy, Remorse, Gloating, Anger
+from ai.core.emotion import Joy, Remorse, Gloating, Anger, SorryFor
 from ai.core.preferences import Preferences
 
 
@@ -78,10 +78,50 @@ class TestAgent(TestCase):
         preferences.set_love(obj.entity_id, -1)
 
         prob = 1
-        emotions = observer.emotions_for_action(hit, subject.entity_id, obj.entity_id, prob)
+        emotions = observer.emotions_for_action(
+            hit, subject.entity_id, obj.entity_id, prob)
         self.assertEqual(len(emotions), 2)
         self.assertIsInstance(emotions[0], Anger)
         self.assertIsInstance(emotions[1], Gloating)
+
+    def test_emotions_for_multiple_object_entities(self):
+        """Test emotions for an object represented as multiple entities."""
+        hit = Action()
+        hit.name = "Hit"
+        object_entity_id_1 = '123a'
+        object_entity_id_2 = '123b'
+        subject_entity_id = '456'
+        observer = Agent(0, 0, 0, 0, 0)
+
+        preferences = observer.get_preferences()
+        preferences.set_goodness(hit, -1)
+        preferences.set_praiseworthiness(hit, -1)
+        preferences.set_love(object_entity_id_1, 1)
+        preferences.set_love(object_entity_id_2, -1)
+        preferences.set_love(subject_entity_id, 1)
+
+        timestamp = 0
+        truth_value = 1
+        observer.beliefs.register_entity(object_entity_id_1)
+        observer.beliefs.register_entity(object_entity_id_2)
+        observer.beliefs.set_entity_is_entity(
+            timestamp, object_entity_id_1, object_entity_id_2, truth_value
+        )
+
+        prob = 1
+        emotions = observer.emotions_for_action(
+            hit,
+            subject_entity_id,
+            object_entity_id_1,
+            prob)
+
+        self.assertEqual(len(emotions), 3)
+        # Anger towards the person who hit (a bad thing to do)
+        self.assertIsInstance(emotions[0], Anger)
+        # Sorry for the loved person being hit
+        self.assertIsInstance(emotions[1], SorryFor)
+        # Gloating over the hated person being hit
+        self.assertIsInstance(emotions[2], Gloating)
 
     def test_tick_mood(self):
         agent = Agent(.01, -.01, .01, -.01, .01)

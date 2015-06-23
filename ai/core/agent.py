@@ -129,68 +129,91 @@ class Agent(Object):
         return hope_fear
 
     def _emotions_for_observed_action(self, action, agent_entity_id, obj_entity_id):
+        agent_emotions = self._action_agent_emotions(action, agent_entity_id)
+        obj_emotions = self._action_object_emotions(action, obj_entity_id)
+        emotions = agent_emotions + obj_emotions
+        return emotions
+
+    def _action_agent_emotions(self, action, agent_entity_id):
         assert(isinstance(agent_entity_id, basestring))
-        assert(isinstance(obj_entity_id, basestring))
-        emotions = []
         preferences = self.get_preferences()
         if preferences is None:
             raise Exception("Cannot calculate emotions without a culture.")
 
         p = preferences.get_praiseworthiness(action)
+        emotions = []
+        related_entities = self.beliefs.get_related_entities(agent_entity_id)
+        # Cycle through for emotions felt about related entities (ones who
+        # represent the same agent as the one the action happened to.)
+        for related_agent_entity_id in related_entities:
+            if agent_entity_id == self.entity_id:
+                # Self-initiated
+                if p > 0:
+                    # Praiseworthy
+                    e = Pride(p)
+                    emotions.append(e)
+                if p < 0:
+                    # Shameworthy
+                    e = Remorse(-1*p)
+                    emotions.append(e)
+            else:
+                # Other-initiaed
+                if p > 0:
+                    # Praiseworthy
+                    e = Gratitude(p)
+                    emotions.append(e)
+                if p < 0:
+                    # Shameworthy
+                    e = Anger(-1*p)
+                    emotions.append(e)
+        return emotions
+
+    def _action_object_emotions(self, action, obj_entity_id):
+        assert(isinstance(obj_entity_id, basestring))
+        preferences = self.get_preferences()
+        if preferences is None:
+            raise Exception("Cannot calculate emotions without a culture.")
         g = preferences.get_goodness(action)
-        l = preferences.get_love(obj_entity_id)
-
-        if agent_entity_id == self.entity_id:
-            # Self-initiated
-            if p > 0:
-                # Praiseworthy
-                e = Pride(p)
-                emotions.append(e)
-            if p < 0:
-                # Shameworthy
-                e = Remorse(-1*p)
-                emotions.append(e)
-        else:
-            # Other-initiaed
-            if p > 0:
-                # Praiseworthy
-                e = Gratitude(p)
-                emotions.append(e)
-            if p < 0:
-                # Shameworthy
-                e = Anger(-1*p)
-                emotions.append(e)
-
-        if obj_entity_id == self.entity_id:
-            if g > 0:
-                # Good thing happened
-                e = Joy(g)
-                emotions.append(e)
-            if g < 0:
-                # Bad thing happened
-                e = Distress(-1*g)
-                emotions.append(e)
-        else:
-            if l > 0:
-                # Something happened to a liked agent
+        emotions = []
+        related_entities = self.beliefs.get_related_entities(obj_entity_id)
+        # Loop through all entities that are the same concept and return
+        # any emotions the action induces. For example, if The Red Knight is
+        # terrible but turns out to be the same as Lancelot, when Lancelot is
+        # hurt, people will feel bad for him as Lancelot (a good guy) but will
+        # gloat over the bad thing happening to the person they knew as The Red
+        # Knight.
+        for related_obj_entity_id in related_entities:
+            l = preferences.get_love(related_obj_entity_id)
+            if related_obj_entity_id == self.entity_id:
                 if g > 0:
                     # Good thing happened
-                    e = HappyFor(l*g)
+                    e = Joy(g)
                     emotions.append(e)
                 if g < 0:
                     # Bad thing happened
-                    e = SorryFor(l*g*-1)
+                    e = Distress(-1*g)
                     emotions.append(e)
-            if l < 0:
-                # Something happened to a disliked agent
-                if g > 0:
-                    # Good thing happened
-                    e = Resentment(-1*l*g)
-                    emotions.append(e)
-                if g < 0:
-                    # Bad thing happened
-                    e = Gloating(l*g)
-                    emotions.append(e)
+            else:
+                if l > 0:
+                    # Something happened to a liked agent
+                    if g > 0:
+                        # Good thing happened
+                        e = HappyFor(l*g)
+                        emotions.append(e)
+                    if g < 0:
+                        # Bad thing happened
+                        e = SorryFor(l*g*-1)
+                        emotions.append(e)
+                if l < 0:
+                    # Something happened to a disliked agent
+                    if g > 0:
+                        # Good thing happened
+                        e = Resentment(-1*l*g)
+                        emotions.append(e)
+                    if g < 0:
+                        # Bad thing happened
+                        e = Gloating(l*g)
+                        emotions.append(e)
         return emotions
 
     def tick_mood(self):

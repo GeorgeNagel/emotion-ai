@@ -37,17 +37,17 @@ balan.beliefs.register_entity(balin.entity_id)
 balan.beliefs.register_entity(balan.entity_id)
 # They both are indifferent to their disguised brother,
 # but love their disguised selves (?)
-balin.get_preferences().set_love(balan.entity_id, -1)
+balin.get_preferences().set_love(balan.entity_id, -.1)
 balin.get_preferences().set_love(balin.entity_id, 1)
-balan.get_preferences().set_love(balin.entity_id, -1)
+balan.get_preferences().set_love(balin.entity_id, -.1)
 balan.get_preferences().set_love(balan.entity_id, 1)
 
 # They each know they just killed and were killed by the disguised characters
 viewers = [balan, balin]
-apply_action(action=Kill, subject=balan, obj=balin, viewers=viewers)
-apply_action(action=Kill, subject=balin, obj=balan, viewers=viewers)
 apply_action(action=RemoveDisguise, subject=balan, obj=balan, viewers=viewers)
 apply_action(action=RemoveDisguise, subject=balin, obj=balin, viewers=viewers)
+apply_action(action=Kill, subject=balan, obj=balin, viewers=viewers)
+apply_action(action=Kill, subject=balin, obj=balan, viewers=viewers)
 
 # They are sad about killing each other.
 print "Balan emotions: %s" % balan.emotions
