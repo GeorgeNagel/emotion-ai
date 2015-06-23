@@ -66,7 +66,8 @@ class Agent(Object):
             emotions.append(e)
         return emotions
 
-    def emotions_for_action(self, action, agent_entity_id, obj_entity_id, prob, prior_prob=None):
+    def emotions_for_action(self, action, agent_entity_id,
+                            obj_entity_id, prob, prior_prob=None):
         """
         Generate a list of emotions for actions based on
         probability of the action happening.
@@ -75,7 +76,8 @@ class Agent(Object):
         assert(isinstance(obj_entity_id, basestring))
         emotions = []
         # Calculate the expected joy/distress at an event's success
-        joy_distress = self._expected_joy_distress(action, agent_entity_id, obj_entity_id)
+        joy_distress = self._expected_joy_distress(
+            action, agent_entity_id, obj_entity_id)
         if prob > 0 and prob < 1:
             if 'joy' in joy_distress:
                 # Possible joyful event
@@ -113,7 +115,8 @@ class Agent(Object):
         """Calculate the expected joy and distress at an actions success."""
         assert(isinstance(agent_entity_id, basestring))
         assert(isinstance(obj_entity_id, basestring))
-        emotions = self._emotions_for_observed_action(action, agent_entity_id, obj_entity_id)
+        emotions = self._emotions_for_observed_action(
+            action, agent_entity_id, obj_entity_id)
         j = None
         d = None
         for e in emotions:
@@ -128,7 +131,8 @@ class Agent(Object):
             hope_fear['distress'] = d
         return hope_fear
 
-    def _emotions_for_observed_action(self, action, agent_entity_id, obj_entity_id):
+    def _emotions_for_observed_action(self, action, agent_entity_id,
+                                      obj_entity_id):
         agent_emotions = self._action_agent_emotions(action, agent_entity_id)
         obj_emotions = self._action_object_emotions(action, obj_entity_id)
         emotions = agent_emotions + obj_emotions
@@ -143,6 +147,9 @@ class Agent(Object):
         p = preferences.get_praiseworthiness(action)
         emotions = []
         related_entities = self.beliefs.get_related_entities(agent_entity_id)
+        # Only count emotions for self once
+        if self.entity_id in related_entities:
+            related_entities = [self.entity_id]
         # Cycle through for emotions felt about related entities (ones who
         # represent the same agent as the one the action happened to.)
         for related_agent_entity_id in related_entities:
@@ -176,6 +183,9 @@ class Agent(Object):
         g = preferences.get_goodness(action)
         emotions = []
         related_entities = self.beliefs.get_related_entities(obj_entity_id)
+        # Only count emotions felt for self once
+        if self.entity_id in related_entities:
+            related_entities = [self.entity_id]
         # Loop through all entities that are the same concept and return
         # any emotions the action induces. For example, if The Red Knight is
         # terrible but turns out to be the same as Lancelot, when Lancelot is

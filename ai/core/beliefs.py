@@ -86,7 +86,10 @@ class Beliefs(object):
             return default
 
     def get_related_entities(self, entity_id, related=None):
-        """Return all entities tied by 'is' relationship including the given entity."""
+        """
+        Return all entities tied by 'is' relationship.
+        Returned array includes the given entity.
+        """
         assert(isinstance(entity_id, basestring))
         if related is None:
             related = [entity_id]
@@ -94,10 +97,13 @@ class Beliefs(object):
         # Create the set of elements related to this one not yet searched for.
         neighbors = []
         for b in self.beliefs:
-            if isinstance(b, EntityEntityBelief):
-                if b.relationship == RELATIONSHIPS.IS and b.entity_1_id == entity_id:
-                    if b.entity_2_id not in related and b.entity_2_id not in neighbors:
-                        # You have not yet searched through this neighbor's relateds
+            if isinstance(b, EntityEntityBelief) and \
+                    b.relationship == RELATIONSHIPS.IS and \
+                    b.entity_1_id == entity_id and \
+                    b.entity_2_id not in related and \
+                    b.entity_2_id not in neighbors:
+                        # You have not yet searched through
+                        # this neighbor's relateds
                         neighbors.append(b.entity_2_id)
 
         # You now know about all neighbors. Don't search for them again.
@@ -112,8 +118,10 @@ class Beliefs(object):
         """Set the bi-directional is relationship."""
         assert(isinstance(entity_1_id, basestring))
         assert(isinstance(entity_2_id, basestring))
-        belief_1 = EntityEntityBelief(timestamp, entity_1_id, entity_2_id, RELATIONSHIPS.IS, value)
-        belief_2 = EntityEntityBelief(timestamp, entity_2_id, entity_1_id, RELATIONSHIPS.IS, value)
+        belief_1 = EntityEntityBelief(
+            timestamp, entity_1_id, entity_2_id, RELATIONSHIPS.IS, value)
+        belief_2 = EntityEntityBelief(
+            timestamp, entity_2_id, entity_1_id, RELATIONSHIPS.IS, value)
         self.set_belief(belief_1)
         self.set_belief(belief_2)
 
@@ -138,7 +146,8 @@ class EntityAttrBelief(Belief):
 
 class EntityEntityBelief(Belief):
     """Beliefs about two entities."""
-    def __init__(self, timestamp, entity_1_id, entity_2_id, relationship, value):
+    def __init__(self, timestamp, entity_1_id, entity_2_id,
+                 relationship, value):
         assert(isinstance(entity_1_id, basestring))
         assert(isinstance(entity_2_id, basestring))
         self.timestamp = timestamp

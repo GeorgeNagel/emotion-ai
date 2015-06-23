@@ -6,7 +6,7 @@ from unittest import TestCase
 from ai.core.action import Action
 from ai.core.agent import Agent
 from ai.core.beliefs import Beliefs
-from ai.core.emotion import Joy, Remorse, Gloating, Anger, SorryFor
+from ai.core.emotion import Joy, Remorse, Gloating, Anger, SorryFor, Distress
 from ai.core.preferences import Preferences
 
 
@@ -122,6 +122,41 @@ class TestAgent(TestCase):
         self.assertIsInstance(emotions[1], SorryFor)
         # Gloating over the hated person being hit
         self.assertIsInstance(emotions[2], Gloating)
+
+    def test_emotions_self_action(self):
+        """Test emotions for an action by an agent with multiple entities."""
+        hit = Action()
+        hit.name = "Hit"
+        agent = Agent(0, 0, 0, 0, 0)
+        agent_entity_id_1 = agent.entity_id
+        agent_entity_id_2 = 'test_123'
+
+        preferences = agent.get_preferences()
+        preferences.set_goodness(hit, -1)
+        preferences.set_praiseworthiness(hit, -1)
+        preferences.set_love(agent_entity_id_1, 1)
+        preferences.set_love(agent_entity_id_2, 1)
+
+        timestamp = 0
+        truth_value = 1
+        agent.beliefs.register_entity(agent_entity_id_1)
+        agent.beliefs.register_entity(agent_entity_id_2)
+        agent.beliefs.set_entity_is_entity(
+            timestamp, agent_entity_id_1, agent_entity_id_2, truth_value
+        )
+
+        prob = 1
+        emotions = agent.emotions_for_action(
+            hit,
+            agent_entity_id_1,
+            agent_entity_id_2,
+            prob)
+
+        self.assertEqual(len(emotions), 2)
+        # Feeling bad for hitting someone agent loves (agent)
+        self.assertIsInstance(emotions[0], Remorse)
+        # Feeling bad for being hit (by agent)
+        self.assertIsInstance(emotions[1], Distress)
 
     def test_tick_mood(self):
         agent = Agent(.01, -.01, .01, -.01, .01)
