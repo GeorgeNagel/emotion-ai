@@ -1,7 +1,10 @@
-from collections import defaultdict
 import random
 
 from ai.core.agent import Agent
+
+
+def wait_for_input():
+    _ = raw_input()  # noqa
 
 
 def joust(player_1, player_2):
@@ -21,6 +24,7 @@ def joust(player_1, player_2):
         advantage = 'p2'
     else:
         advantage = 'neither'
+    wait_for_input()
     print "%s and %s pull their swords out and prepare for hand combat." % (
         player_1.name, player_2.name)
     while (player_1_health > 0) and (player_2_health > 0):
@@ -45,6 +49,7 @@ def joust_pass(player_1, player_2):
     print "%s and %s gallop towards each other at high speed." % (
         player_1.name, player_2.name
     )
+    wait_for_input()
     player_1_mounted = True
     player_2_mounted = True
     dice_roll = random.choice(range(10))
@@ -76,8 +81,10 @@ def sword_fight(p1, p1_advantage, p1_health, p2, p2_advantage, p2_health):
         print "%s takes the high ground." % p1.name
     elif p2_advantage > p1_advantage:
         print "%s takes the high ground." % p2.name
+    wait_for_input()
     p1_advantage, p2_health, p2_advantage = sword_attack(
         p1, p1_advantage, p2, p2_health, p2_advantage)
+    wait_for_input()
     p2_advantage, p1_health, p1_advantage = sword_attack(
         p2, p2_advantage, p1, p1_health, p1_advantage)
     return (p1_advantage, p1_health, p2_advantage, p2_health)
@@ -113,25 +120,11 @@ def sword_attack(attacker, attacker_advantage,
         defender_health = defender_health - 2
     return (attacker_advantage, defender_health, defender_advantage)
 
+
 if __name__ == "__main__":
     runs = 1
-    victory_dict = {
-        'p1': defaultdict(int),
-        'p2': defaultdict(int),
-        'neither': defaultdict(int)
-    }
     while runs > 0:
         runs = runs - 1
         p1 = Agent.create_random_agent()
         p2 = Agent.create_random_agent()
         advantage, p1alive, p2alive = joust(p1, p2)
-        if p1alive:
-            victory_dict[advantage]['p1win'] = \
-                victory_dict[advantage]['p1win'] + 1
-        elif p2alive:
-            victory_dict[advantage]['p2win'] = \
-                victory_dict[advantage]['p2win'] + 1
-        else:
-            victory_dict[advantage]['neither'] = \
-                victory_dict[advantage]['neither'] + 1
-        print "victory_dict: %s" % victory_dict
