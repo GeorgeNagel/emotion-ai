@@ -21,13 +21,17 @@ def joust(player_1, player_2):
         advantage = 'p2'
     else:
         advantage = 'neither'
-    print "%s and %s pull their swords out and prepare for hand combat." % (player_1.name, player_2.name)
+    print "%s and %s pull their swords out and prepare for hand combat." % (
+        player_1.name, player_2.name)
     while (player_1_health > 0) and (player_2_health > 0):
-        player_1_advantage, player_1_health, player_2_advantage, player_2_health = sword_fight(
-            player_1, player_1_advantage, player_1_health, player_2, player_2_advantage, player_2_health
-        )
+        player_1_advantage, player_1_health, \
+            player_2_advantage, player_2_health = sword_fight(
+                player_1, player_1_advantage,
+                player_1_health, player_2,
+                player_2_advantage, player_2_health)
     if (player_1_health <= 0) and (player_2_health <= 0):
-        print "%s and %s lie bloodied on the ground." % (player_1.name, player_2.name)
+        print "%s and %s lie bloodied on the ground." % (
+            player_1.name, player_2.name)
     elif player_1_health <= 0:
         print "%s lies bloodied on the ground." % player_1.name
     elif player_2_health <= 0:
@@ -49,11 +53,13 @@ def joust_pass(player_1, player_2):
         print "Both hits miss. They turn around and line up for another pass."
     elif dice_roll < 7:
         # Player 1 knocked off
-        print "%s is hit square in the chest and is thrown to the ground." % player_1.name
+        print "%s is hit square in the chest and is thrown to the ground." % (
+            player_1.name)
         player_1_mounted = False
     elif dice_roll < 9:
         # Player 2 knocked off
-        print "%s is knocked straight on and is thrown to the ground." % player_2.name
+        print "%s is knocked straight on and is thrown to the ground." % (
+            player_2.name)
         player_2_mounted = False
     else:
         # Both knocked off
@@ -77,7 +83,8 @@ def sword_fight(p1, p1_advantage, p1_health, p2, p2_advantage, p2_health):
     return (p1_advantage, p1_health, p2_advantage, p2_health)
 
 
-def sword_attack(attacker, attacker_advantage, defender, defender_health, defender_advantage):
+def sword_attack(attacker, attacker_advantage,
+                 defender, defender_health, defender_advantage):
     dice_size = max((10 + attacker_advantage - defender_advantage), 1)
     dice_roll = random.choice(range(dice_size))
     # 1-2 defender gains an advantage
@@ -92,10 +99,12 @@ def sword_attack(attacker, attacker_advantage, defender, defender_health, defend
     elif dice_roll < 5:
         print "%s blocks the attack." % defender.name
     elif dice_roll < 7:
-        print "%s blocks the attack and %s presses forward." % (defender.name, attacker.name)
+        print "%s blocks the attack and %s presses forward." % (
+            defender.name, attacker.name)
         attacker_advantage = attacker_advantage + 1
     elif dice_roll < 9:
-        print "%s makes contact and %s shows blood." % (attacker.name, defender.name)
+        print "%s makes contact and %s shows blood." % (
+            attacker.name, defender.name)
         attacker_advantage = attacker_advantage + 1
         defender_health = defender_health - 1
     else:
@@ -105,7 +114,7 @@ def sword_attack(attacker, attacker_advantage, defender, defender_health, defend
     return (attacker_advantage, defender_health, defender_advantage)
 
 if __name__ == "__main__":
-    runs = 10000
+    runs = 1
     victory_dict = {
         'p1': defaultdict(int),
         'p2': defaultdict(int),
@@ -117,9 +126,12 @@ if __name__ == "__main__":
         p2 = Agent.create_random_agent()
         advantage, p1alive, p2alive = joust(p1, p2)
         if p1alive:
-            victory_dict[advantage]['p1win'] = victory_dict[advantage]['p1win'] + 1
+            victory_dict[advantage]['p1win'] = \
+                victory_dict[advantage]['p1win'] + 1
         elif p2alive:
-            victory_dict[advantage]['p2win'] = victory_dict[advantage]['p2win'] + 1
+            victory_dict[advantage]['p2win'] = \
+                victory_dict[advantage]['p2win'] + 1
         else:
-            victory_dict[advantage]['neither'] = victory_dict[advantage]['neither'] + 1
+            victory_dict[advantage]['neither'] = \
+                victory_dict[advantage]['neither'] + 1
         print "victory_dict: %s" % victory_dict
