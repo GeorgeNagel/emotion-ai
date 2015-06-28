@@ -39,6 +39,9 @@ class Agent(Object):
         self.children = []
         super(Agent, self).__init__()
 
+    def __str__(self):
+        return self.name
+
     @classmethod
     def from_personality(cls, p):
         agent = Agent(p.o, p.c, p.e, p.a, p.n)

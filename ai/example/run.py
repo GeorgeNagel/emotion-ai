@@ -54,3 +54,6 @@ print "Balan emotions: %s" % balan.emotions
 print "Balan mood: %s" % balan.mood
 print "Balin emotions: %s" % balin.emotions
 print "Balin mood: %s" % balin.mood
+
+# TODO: Anger about an action should probably be weighted by how beneficial
+# the outcome is and how liked the object of an action is to the observer
