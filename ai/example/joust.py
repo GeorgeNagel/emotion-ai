@@ -118,6 +118,8 @@ def sword_attack(attacker, attacker_advantage,
         print "%s wounds %s deeply." % (attacker.name, defender.name)
         attacker_advantage = attacker_advantage + 1
         defender_health = defender_health - 2
+    attacker_advantage = max(attacker_advantage, 2)
+    defender_advantage = max(defender_advantage, 2)
     return (attacker_advantage, defender_health, defender_advantage)
 
 
