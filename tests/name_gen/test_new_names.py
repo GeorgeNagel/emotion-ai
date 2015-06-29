@@ -11,3 +11,10 @@ class TestGenerateNames(TestCase):
 
         female_name = generate_name("female")
         self.assertIsInstance(female_name, basestring)
+
+    def test_arthurian_names(self):
+        male_name = generate_name("male", origin="arthurian")
+        self.assertIsInstance(male_name, basestring)
+
+        female_name = generate_name("female", origin="arthurian")
+        self.assertIsInstance(female_name, basestring)
