@@ -3,7 +3,7 @@ import random
 
 from ai.core.agent import Agent, GENDERS
 from ai.core.personality import combine_personalities
-from ai.name_gen.new_names import generate_names
+from ai.name_gen.new_names import generate_name
 
 
 # Random variation of child from parents personalities
@@ -68,7 +68,7 @@ def create_child(agent_1, agent_2, child_gender):
     p3 = combine_personalities(p1, p2, CHILD_PERSONALITY_VARIATION)
     child = Agent.from_personality(p3)
     child.set_parents(agent_1, agent_2)
-    child.name = generate_names(child_gender, 1)[0]
+    child.name = generate_name(child_gender)
     child.gender = child_gender
 
     agent_1.add_child(child)

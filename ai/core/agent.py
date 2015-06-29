@@ -8,7 +8,7 @@ from ai.core.emotion import Love, Hate, Pride, Remorse, Anger, Gratitude, \
 from ai.core.preferences import Preferences
 from ai.core.personality import Personality
 from ai.core.obj import Object
-from ai.name_gen.new_names import generate_names
+from ai.name_gen.new_names import generate_name
 
 EMOTION_THRESHOLD = .01
 
@@ -267,5 +267,5 @@ class Agent(Object):
         if gender is None:
             gender = random.choice([GENDERS.MALE, GENDERS.FEMALE])
         agent.gender = gender
-        agent.name = generate_names(gender, 1)[0]
+        agent.name = generate_name(gender)
         return agent
