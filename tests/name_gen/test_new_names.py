@@ -18,3 +18,10 @@ class TestGenerateNames(TestCase):
 
         female_name = generate_name("female", origin="arthurian")
         self.assertIsInstance(female_name, basestring)
+
+    def test_welsh_names(self):
+        male_name = generate_name("male", origin="welsh")
+        self.assertIsInstance(male_name, basestring)
+
+        female_name = generate_name("female", origin="welsh")
+        self.assertIsInstance(female_name, basestring)
