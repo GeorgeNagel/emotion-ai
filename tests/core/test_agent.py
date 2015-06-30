@@ -123,6 +123,43 @@ class TestAgent(TestCase):
         # Gloating over the hated person being hit
         self.assertIsInstance(emotions[2], Gloating)
 
+    def test_emotions_for_multiple_subject_entities(self):
+        """Test emotions for a subject represented as multiple entities."""
+        hit = Action()
+        hit.name = "Hit"
+        subject_entity_id_1 = '123a'
+        subject_entity_id_2 = '123b'
+        object_entity_id = '456'
+        observer = Agent(0, 0, 0, 0, 0)
+
+        preferences = observer.get_preferences()
+        preferences.set_goodness(hit, -1)
+        preferences.set_praiseworthiness(hit, -1)
+        preferences.set_love(subject_entity_id_1, 1)
+        preferences.set_love(subject_entity_id_2, -1)
+        preferences.set_love(object_entity_id, 1)
+
+        timestamp = 0
+        truth_value = 1
+        observer.beliefs.register_entity(subject_entity_id_1)
+        observer.beliefs.register_entity(subject_entity_id_2)
+        observer.beliefs.set_entity_is_entity(
+            timestamp, subject_entity_id_1, subject_entity_id_2, truth_value
+        )
+
+        prob = 1
+        emotions = observer.emotions_for_action(
+            hit,
+            subject_entity_id_1,
+            object_entity_id,
+            prob)
+
+        self.assertEqual(len(emotions), 2)
+        # Anger towards the person who hit (a bad thing to do)
+        self.assertIsInstance(emotions[0], Anger)
+        # Sorry for the loved person being hit
+        self.assertIsInstance(emotions[1], SorryFor)
+
     def test_emotions_self_action(self):
         """Test emotions for an action by an agent with multiple entities."""
         hit = Action()

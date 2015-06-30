@@ -153,29 +153,29 @@ class Agent(Object):
         # Only count emotions for self once
         if self.entity_id in related_entities:
             related_entities = [self.entity_id]
-        # Cycle through for emotions felt about related entities (ones who
-        # represent the same agent as the one the action happened to.)
-        for related_agent_entity_id in related_entities:
-            if agent_entity_id == self.entity_id:
-                # Self-initiated
-                if p > 0:
-                    # Praiseworthy
-                    e = Pride(p)
-                    emotions.append(e)
-                if p < 0:
-                    # Shameworthy
-                    e = Remorse(-1*p)
-                    emotions.append(e)
-            else:
-                # Other-initiaed
-                if p > 0:
-                    # Praiseworthy
-                    e = Gratitude(p)
-                    emotions.append(e)
-                if p < 0:
-                    # Shameworthy
-                    e = Anger(-1*p)
-                    emotions.append(e)
+        # These emotions are agnostic of the relationship between the
+        # observer and the subject, thus we only calculate once for
+        # each entity, though there may be many related entities.
+        if agent_entity_id == self.entity_id:
+            # Self-initiated
+            if p > 0:
+                # Praiseworthy
+                e = Pride(p)
+                emotions.append(e)
+            if p < 0:
+                # Shameworthy
+                e = Remorse(-1*p)
+                emotions.append(e)
+        else:
+            # Other-initiaed
+            if p > 0:
+                # Praiseworthy
+                e = Gratitude(p)
+                emotions.append(e)
+            if p < 0:
+                # Shameworthy
+                e = Anger(-1*p)
+                emotions.append(e)
         return emotions
 
     def _action_object_emotions(self, action, obj_entity_id):
