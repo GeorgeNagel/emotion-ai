@@ -234,7 +234,7 @@ class Agent(Object):
         # Decay emotion amounts
         decayed_emotions = []
         for emotion in self.emotions:
-            emotion.amount /= 2
+            emotion.amount /= 2.0
             # Remove any emotions below the perceptible threshold
             if emotion.amount > EMOTION_THRESHOLD:
                 decayed_emotions.append(emotion)

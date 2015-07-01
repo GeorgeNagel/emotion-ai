@@ -42,6 +42,12 @@ balin.get_preferences().set_love(balin.entity_id, 1)
 balan.get_preferences().set_love(balin.entity_id, -.1)
 balan.get_preferences().set_love(balan.entity_id, 1)
 
+print "Prior to actions"
+print "Balan emotions: %s" % balan.emotions
+print "Balan mood: %s" % balan.mood
+print "Balin emotions: %s" % balin.emotions
+print "Balin mood: %s" % balin.mood
+
 # They each know they just killed and were killed by the disguised characters
 viewers = [balan, balin]
 apply_action(action=RemoveDisguise, subject=balan, obj=balan, viewers=viewers)
@@ -50,6 +56,16 @@ apply_action(action=Kill, subject=balan, obj=balin, viewers=viewers)
 apply_action(action=Kill, subject=balin, obj=balan, viewers=viewers)
 
 # They are sad about killing each other.
+print "After actions"
+print "Balan emotions: %s" % balan.emotions
+print "Balan mood: %s" % balan.mood
+print "Balin emotions: %s" % balin.emotions
+print "Balin mood: %s" % balin.mood
+
+balin.tick_mood()
+balan.tick_mood()
+
+print "After time"
 print "Balan emotions: %s" % balan.emotions
 print "Balan mood: %s" % balan.mood
 print "Balin emotions: %s" % balin.emotions

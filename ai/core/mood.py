@@ -21,6 +21,14 @@ class Mood(object):
             self.add_mood(emotion_mood)
 
     def __str__(self):
+        return "%s (%s)" % (self.type, self.amount)
+
+    @property
+    def amount(self):
+        return (self.p**2.0 + self.a**2.0 + self.d**2.0)**0.5
+
+    @property
+    def type(self):
         """
         Value to return when cast to a string.
 

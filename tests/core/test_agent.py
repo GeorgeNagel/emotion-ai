@@ -25,7 +25,7 @@ class TestAgent(TestCase):
     def test_from_OCEAN(self):
         """Create an agent given a personality."""
         agent = Agent(-1, -1, 1, -1, 1)
-        self.assertEqual(str(agent.mood), "Disdainful")
+        self.assertEqual(agent.mood.type, "Disdainful")
 
     def test_set_get_preferences(self):
         action = Action()
@@ -197,19 +197,27 @@ class TestAgent(TestCase):
 
     def test_tick_mood(self):
         agent = Agent(.01, -.01, .01, -.01, .01)
-        self.assertEqual(str(agent.mood), "Disdainful")
+        self.assertEqual(agent.mood.type, "Disdainful")
         agent.emotions = [Joy(.05)]
 
         agent.tick_mood()
         self.assertEqual(len(agent.emotions), 1)
         self.assertEqual(agent.emotions[0].amount, .025)
-        self.assertEqual(str(agent.mood), "Relaxed")
+        self.assertEqual(agent.mood.type, "Relaxed")
 
         # After enough ticks, the emotion should be removed from memory
         agent.tick_mood()
         agent.tick_mood()
         self.assertEqual(len(agent.emotions), 0)
-        self.assertEqual(str(agent.mood), "Disdainful")
+        self.assertEqual(agent.mood.type, "Disdainful")
+
+    def test_tick_mood_int(self):
+        """Test tick mood with int amounts."""
+        agent = Agent(.01, -.01, .01, -.01, .01)
+        agent.emotions = [Joy(1)]
+        agent.tick_mood()
+        self.assertEqual(len(agent.emotions), 1)
+        self.assertEqual(agent.emotions[0].amount, .5)
 
     def test_create_random_agent(self):
         agent = Agent.create_random_agent()
