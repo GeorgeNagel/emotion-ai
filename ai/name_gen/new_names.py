@@ -5,8 +5,11 @@ from ai.name_gen.fantasy.new_names import \
     generate_names as fantasy_generate_names
 
 
-def generate_name(gender, origin="welsh"):
-    assert(origin in ["fantasy", "arthurian", "welsh"])
+def generate_name(gender, origin="anglo-saxon"):
+    assert(origin in [
+        "fantasy", "arthurian", "welsh",
+        "irish", "scottish", "anglo-saxon"
+    ])
     # Welsh name source
     # http://www.behindthename.com/names/usage/welsh
     if origin == "fantasy":
