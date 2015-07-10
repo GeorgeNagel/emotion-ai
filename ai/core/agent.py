@@ -255,7 +255,7 @@ class Agent(Object):
             self.children.append(child)
 
     @classmethod
-    def create_random_agent(cls, gender=None):
+    def create_random_agent(cls, gender=None, origin="anglo-saxon"):
         """Create a first-generation agent."""
         # Randomize the personality
         o = random.random()*2 - 1
@@ -267,5 +267,5 @@ class Agent(Object):
         if gender is None:
             gender = random.choice([GENDERS.MALE, GENDERS.FEMALE])
         agent.gender = gender
-        agent.name = generate_name(gender)
+        agent.name = generate_name(gender, origin=origin)
         return agent
