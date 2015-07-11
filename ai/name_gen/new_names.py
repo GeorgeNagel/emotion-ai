@@ -17,7 +17,14 @@ def generate_name(gender, origin="anglo-saxon"):
         return fantasy_generate_names(gender, 1)[0]
     else:
         possible_names = read_names(origin, gender)
-        return random.choice(possible_names)
+        # Capitalize correctly
+        capitalized_names = []
+        for name in possible_names:
+            unicode_name = name.decode('utf-8')
+            capitalized_name = unicode_name.capitalize()
+            capitalized_names.append(capitalized_name)
+
+        return random.choice(capitalized_names)
 
 
 def read_names(origin, gender):
